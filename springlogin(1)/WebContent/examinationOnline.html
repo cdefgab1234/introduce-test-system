@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>在线考试</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"></link>
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrapValidator.css"/>
+  	<script type="text/javascript" src="js/jq.js"></script>
+  	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+	<script src="js/vue-resource.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/examination.js"></script>
+	<script type="text/javascript" src="bootstrap/dist/js/bootstrapValidator.js"></script>
+	<script type="text/javascript" src="js/validator.js"></script>
+	<link rel="stylesheet" href="css/index.css" />
+</head>
+ 
+<body style="background:#750000">
+ <div id="coverpage">
+	  <div id="onepics"><div class="onepic_wrap"><img src="images/categorybg.png" class="wrap_pic"></div></div>
+	</div>
+<div id="box" v-cloak>
+
+<div v-if="Examinationstart=='true'" id="examination">
+	<div  class="container-fluid"  id="login">
+		<div v-if="loginstate=='开始'"  class="row  well-sm">
+				<div class="pull-left" id="logo">
+					<img src="images/logo.png" />
+				</div>
+				<div class=" pull-right" id="nav-ul">
+					<ul  class="nav navbar-nav">
+						<li >欢迎你，{{username}}</li>
+					</ul>
+				</div>
+			</div>
+		<div v-if="loginstate==''" class="col-md-6 well login col-md-offset-3"   id="validataPhone">
+			<div class=" well-sm col-md-10  col-md-offset-1 h4 text-center">考试</div>
+		   		<div v-if="yzmState==true"  id="yzphone"  class="form-group col-md-6  col-md-offset-2 " style="padding-right:0;">
+	                <div class=" input-group  ">
+		                   <label class=" input-group-addon"><span class=""><i class="glyphicon glyphicon-earphone"></i></span>  </label>
+		                    <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入手机号" v-model="userphone" @focus="hiddenErr">
+		              </div>
+	              <div class="err help-block" id="phoneyz">手机号尚未录入，请重新输入</div>
+	          </div>
+	          <div v-if="yzmState==false"  id="yzphone"  class="form-group col-md-6  col-md-offset-3 " style="padding-right:0;">
+	                <div class=" input-group  ">
+		                   <label class=" input-group-addon"><span class=""><i class="glyphicon glyphicon-earphone"></i></span>  </label>
+		                    <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入手机号" v-model="userphone" @focus="hiddenErr">
+		              </div>
+	              <div class="err help-block" id="phoneyz">手机号尚未录入，请重新输入</div>
+	          </div>
+	          <div v-if="yzmState==true" class="form-group col-md-2 ">
+	                <div class=" input-group  ">
+		                  <button id="getYzm"  class="btn btn-success btn-block  col-md-12" @click="getYzm" :disabled="setdis">{{yzmbtn}}</button>
+		              </div>
+	          </div>
+	            <div v-if="yzmState==true" class=" form-group col-md-4  col-md-offset-2"   style="padding-right:0;">
+			          <input type="text" class="form-control" name="yzmerr" placeholder="输入验证码" v-model="yzm" @focus="hiddenErr">
+			          
+			     <div class="err help-block" id="yzmerr">验证码输入有误</div>
+			    </div>
+	          <div class="form-group  col-md-6  col-md-offset-3">
+		         <button id="loginBtn" class="btn btn-success btn-block  col-md-12" v-on:click="login()"  :disabled="setdisbystart">开始考试</button>
+		    </div>
+		</div>
+	</div>
+	 <div v-if="loginstate=='开始'" class="container-fluid " id="questions">
+		
+			<div class=" box col-md-6 col-md-offset-3 well-lg"  >
+			   <ul v-if="index<(pageIndex+3)&&index>=pageIndex&&(val.type==1||val.type==2)" class="list-unstyled  col-md-6 col-md-offset-2" v-for="(val,index) in myXuan"  >
+			 		<li  v-if="val.type==1"><span>单选题 </span></li> 
+					<li v-if="val.type==2"><span >多选题 </span></li> 
+					<li>{{index+1}}：{{val.detail}}</li>
+					<li :class="val.quesanswer.length>1?'checkbox':'radio'">
+					<label>
+						<input v-if="val.quesanswer.length>1"  type="checkbox"  @click="choose('A',index,'moreChoose')" /> 
+						<input v-if="val.quesanswer.length==1" type="radio" :name="index" @click="choose('A',index,'oneChoose')" /> A:{{val.A}}
+					</label>
+					</li>
+					<li :class="val.quesanswer.length>1?'checkbox':'radio'">
+					<label> 
+						<input v-if="val.quesanswer.length>1" type="checkbox"  @click="choose('B',index,'moreChoose')" /> 
+						<input v-if="val.quesanswer.length==1" type="radio" :name="index" @click="choose('B',index,'oneChoose')" /> B:{{val.B}}
+					</label>
+					</li>
+					<li :class="val.quesanswer.length>1?'checkbox':'radio'">
+					 	<label> 
+							<input v-if="val.quesanswer.length>1" type="checkbox"  @click="choose('C',index,'moreChoose')" /> 
+							<input v-if="val.quesanswer.length==1" type="radio" :name="index" @click="choose('C',index,'oneChoose')" /> C:{{val.C}}
+						</label>
+					</li>
+					<li :class="val.quesanswer.length>1?'checkbox':'radio'">
+						 <label> 
+							<input v-if="val.quesanswer.length>1" type="checkbox"  @click="choose('D',index,'moreChoose')" /> 
+							<input v-if="val.quesanswer.length==1" type="radio" :name="index" @click="choose('D',index,'oneChoose')" /> D:{{val.D}}
+						 </label>
+					</li>
+			   </ul> 
+				<ul  v-if="index<(pageIndex+3)&&index>=pageIndex&&val.type==3" class="list-unstyled  col-md-6 col-md-offset-2" v-for="(val,index) in myXuan"  >
+			 		<li v-if="val.type==3"><span>判断题</span></li> 
+			 		<li>{{index+1}}：{{val.detail}}</li>
+					<li class="radio">
+					 	<label> 
+							<input type="radio" :name="index" @click="choose('正确',index,'judge')" /> 正确
+						</label>
+					</li>
+					<li class="radio">
+						<label>
+							<input type="radio" :name="index" @click="choose('错误',index,'judge')" /> 错误
+						</label>
+					</li>
+			   </ul> 
+			    <div id="endAnswer">
+			    	 <div class="time">{{time}}</div>
+			    	 <button v-if="submitAnswer=='false'" class="btn btn-success btn-block  col-md-12" data-toggle="modal" data-target="#nextPage" >下一页</button>
+			         <button v-if="submitAnswer=='true'" id="loginBtn" class="btn btn-success btn-block  col-md-12" @click="allAnswers">提交答案</button>
+			    </div>
+			</div>
+	
+	</div> 
+</div> 
+        <!--模态框 弹出框 进入下一页弹框-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="nextPage">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title">进入下一页</span></h4> 
+                      
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4 class="text-danger"><span class="glyphicon glyphicon-exclamation-sign " aria-hidden="true"></span>请您仔细检查,进入下一页之后将不能返回。</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-success btn-sm">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" @click="nextPage(3)">进入下一页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模态框（Modal） 进入考试判断 -->
+	<div class="modal fade" id="startexaminate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                 <h4 class="modal-title">消息提醒</span></h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-danger text-center"><span class="glyphicon glyphicon-remove " aria-hidden="true"></span>您已经测试过了,等待结果吧</h4> 
+            </div>
+             <div class="modal-footer text-right">
+                   <button data-dismiss="modal" class="btn btn-success btn-sm">我知道了</button>
+               </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+<div class="container" v-if="Examinationstart=='false'">
+	<div class="row text-center well" id="examinationEnd" >
+		<div class="col-md-8 col-md-offset-2">考试结束,等待答案吧</div>
+	</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Insert title here</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"></link>
+  	<link rel="stylesheet" href="css/index.css" type="text/css"></link>
+  	<script type="text/javascript" src="js/jq.js"></script>
+ 
+  	<link rel="stylesheet" href="bootstrap/dist/css/bootstrapValidator.css"/>
+	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="bootstrap/dist/js/bootstrapValidator.js"></script>
+</head>
+<body>
+	<div class="container">
+        <div class="row">
+             <div class="col-lg-8 col-lg-offset-2" style="margin-top:50px">
+            <div class="progress">
+			  <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:66.6%">
+			  </div>
+			</div>
+                <div class="page-header">
+					<h2>请完成密保问题验证 </h2>
+                </div>
+                <form id="defaultForm" class="form-horizontal"  >
+                     <div class="form-group">
+                        <label class="col-lg-3 control-label">选择密保问题1</label>
+                        <div class="col-lg-5">
+							   <select class="form-control pull-left" style="margin-right:10px;" name="qusetion1" disabled>
+								 </select>
+                        </div>
+                    </div>
+                     <div class="form-group">
+								<label class="col-lg-3 control-label">答案：</label>
+                        <div class="col-lg-5">
+							 <input type="text" class="form-control" name="answer1" data-bv-notempty data-bv-notempty-message="答案不能为空" />
+                        </div>
+                         <div class="err help-block">密保答案不正确,请检查</div>
+                    </div>
+                     <div class="form-group">
+                        <label class="col-lg-3 control-label">选择密保问题2</label>
+                        <div class="col-lg-5">
+							   <select  class="form-control pull-left" style="margin-right:10px;" name="qusetion2" disabled>
+								 </select>
+                        </div>
+                    </div>
+                      <div class="form-group" style="margin-bottom:0;">
+								<label class="col-lg-3 control-label">答案：</label>
+                        <div class="col-lg-5">
+							 <input type="text" class="form-control" name="answer2" 
+							 data-bv-notempty data-bv-notempty-message="答案不能为空" 
+							  
+							 />
+                        </div>
+							  <div class="err help-block">密保答案不正确,请检查</div>
+                    </div>
+                    <div class="form-group ">
+                    	 <div class="col-lg-4 col-lg-offset-3 well-sm">
+                           <a href="javascript:;" id="initA" >忘记了,点击换一换密保问题</a>
+                        </div>
+                        <div class="col-lg-4 col-lg-offset-3">
+                           <button id="registerBtn" class="btn btn-success ">完成验证</button>
+                        </div>
+                    </div> 
+                </form>
+            </div>
+        </div>
+    </div>
+	<script type="text/javascript" src="js/validator.js"></script>	
+</body>
+<script type="text/javascript">
+var json;
+function initQusetions(){
+	$.ajax({
+		url:"forgetpass.action",
+		data:{
+			username:sessionStorage.getItem("username")
+		},
+		dataType:"json",
+		success:function(k){
+			$("select").html("")
+			$(k).each(function(i,n){
+				var index=i;
+				var _this=n;
+				$("select").each(function(i,n){
+					if(index==i){
+						var option="<option >"+_this.Security+"</option>";
+						$("select").eq(i).append(option);
+						$("select").eq(i).find("option:selected").attr("value",_this.yzid)
+					}
+				})
+				json=k;
+			})
+		}
+	})
+}
+initQusetions();
+$("#initA").on("click",function(){
+	initQusetions();
+})
+ $("#registerBtn").on("click",function(){
+	 console.log()
+  	if($('#defaultForm').data('bootstrapValidator').isValid()){
+  		VerificationSecurity()
+	}
+ })
+  $("input[name^=answer]").on("focus",function(){
+	  $(this).parent().next().hide();
+  })
+  function VerificationSecurity(){
+	  $.ajax({
+  		  url: "VerificationSecurity.action",
+  		  data:{
+  			  username:sessionStorage.getItem("username"),
+  			  qusetion1:$("select").eq(0).find("option:selected").val(),
+	  		  answer1:$("input[name=answer1]").val(),
+	  		  qusetion2:$("select").eq(1).find("option:selected").val(),
+		 	  answer2:$("input[name=answer2]").val(),
+  		  },
+  		  success: function(response){
+  			  console.log(response);
+  			 if(response==1){ 
+  				  console.log("问题1")
+  				   $("input[name=answer2]").parent().next().show();
+  				$("input[name=answer2]").parent().parent().removeClass("has-success").addClass("has-error")
+  				$("input[name=answer2]").next().removeClass("glyphicon-ok").addClass("glyphicon-remove")
+  			  }else if(response==2){
+  				  console.log("问题2")
+  				   $("input[name=answer1]").parent().next().show();
+  				  $("input[name=answer1]").parent().parent().removeClass("has-success").addClass("has-error")
+  				  $("input[name=answer1]").next().removeClass("glyphicon-ok").addClass("glyphicon-remove")
+  			  }else if(response==3){
+  				  $(".err.help-block").show();
+  				  $("input[name^=answer]").parent().parent().removeClass("has-success").addClass("has-error")
+  				  $("input[name^=answer]").next().removeClass("glyphicon-ok").addClass("glyphicon-remove")
+  			  }else{
+  				 console.log("ok")
+	 			 	var url="modifyPassword.html";
+	  			  window.open(url,"_parent")  
+  			  }
+  		  }
+  		}); 
+  }
+</script>
+</html>

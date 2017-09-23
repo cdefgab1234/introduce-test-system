@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Insert title here</title>
+  	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"></link>
+  	<link rel="stylesheet" href="css/index.css" type="text/css"></link>
+  	<script type="text/javascript" src="js/jq.js"></script>
+  	<script type="text/javascript" src="js/common.js"></script>
+  	<link rel="stylesheet" href="bootstrap/dist/css/bootstrapValidator.css"/>
+	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="bootstrap/dist/js/bootstrapValidator.js"></script>
+  	</head>
+  <body class="loginBg">
+  <div id="coverpage">
+	  <div id="onepics"><div class="onepic_wrap"><img src="images/ab.jpg" class="wrap_pic"></div></div>
+	</div> 
+<div class="container loginindex"  id="login">
+	<form id="defaultForm"  >
+	<div class="col-md-6 well login col-md-offset-3">
+		<div class=" well-sm col-md-10  col-md-offset-1 h4 text-center">登录</div>
+	   <div class="form-group col-md-8 col-md-offset-2">
+                <div class=" input-group  ">
+                   <label class=" input-group-addon"><span class=""><i class="glyphicon glyphicon-user"></i></span>  </label>
+                    <input type="text" class="form-control" id="loginname" name="loginname" placeholder="用户名">
+              </div>
+              <div class="err help-block">用户名不存在</div>
+          </div>
+		<div class="form-group col-md-8 col-md-offset-2">
+                <div class=" input-group  ">
+                   <label class=" input-group-addon"><span class=""><i class="glyphicon glyphicon-lock"></i></span>  </label>
+                    <input type="password" class="form-control" id="password" name="password"  placeholder="密码" >
+              </div>
+              <div class="err help-block">密码错误</div>
+          </div>
+         <div class="form-group col-md-8 col-md-offset-2" style=" padding-left: 0;">
+		  <div class="form-group col-md-4 " style="display:none" id="yanzheng1">
+                <div class=" input-group  ">
+                    <input type="text" class="form-control" id="yzm" name="yzm" placeholder="验证码">
+              </div>
+          </div>
+                    <input type="text" class="form-control" id="yzms" name="yzms" readonly = "readonly" style="display:none" >
+           <div class="form-group col-md-8" style="display:none" id="yanzheng2">
+                <div class=" input-group  ">
+                 <canvas id="canvas" width="70" height="34"></canvas>
+                  <a href="javascript:;" id="img" class="pull-right" style="line-height: 34px;text-indent: 10px;">换一张</a>
+              </div>
+          </div>
+
+            </div>
+              <div class="well-sm form-group   col-md-8  col-md-offset-2" style="padding-top: 0;" >
+                   <a class="col-md-offset-1 pull-left" href="Register.html">注册账号</a>
+                   <a class="pull-right" href="forgetPass.html">忘记密码</a>
+            </div> 
+	     <div class="  col-md-6  col-md-offset-3" style="padding-top:5px">
+	         <button id="loginBtn" class="btn btn-success btn-block  col-md-12">登录</button>
+	    </div>
+
+	</div>
+
+	</form>
+</div>
+</body>
+<script type="text/javascript" src="js/validator.js"></script>
+<script type="text/javascript">
+ if(localStorage.getItem("justlevel")==null){
+	 //alert(localStorage.getItem("justlevel")==null)
+	localStorage.setItem("justlevel", "0");
+} 
+ if(localStorage.getItem("justlevel")*1>=3){
+		$("#yanzheng1").show();
+		$("#yanzheng2").show();
+	}
+
+$.ajax({
+	url:"yzm.action",
+	success:function(k){
+		console.log(k)
+		 $("#yzms").attr("value",k);
+		 drawPic();
+	}
+})
+  $("#img").on("click",function(){
+		var _this=$(this)
+	 	$.ajax({
+			url:"yzm.action",
+			success:function(k){
+				console.log(k)
+				 $("#yzms").attr("value",k);
+				 drawPic();
+			}
+		})
+	}) 	
+  /**生成一个随机数**/
+  function randomNum(min,max){
+    return Math.floor( Math.random()*(max-min)+min);
+  }
+  /**生成一个随机色**/
+  function randomColor(min,max){
+    var r = randomNum(min,max);
+    var g = randomNum(min,max);
+    var b = randomNum(min,max);
+    return "rgb("+r+","+g+","+b+")";
+  }
+  
+  
+	
+		
+  /**绘制验证码图片**/
+  function drawPic(){
+    var canvas=document.getElementById("canvas");
+    var width=canvas.width;
+    var height=canvas.height;
+    var ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'bottom';
+
+    /**绘制背景色**/
+    ctx.fillStyle = randomColor(180,240); //颜色若太深可能导致看不清
+    ctx.fillRect(0,0,width,height);
+    /**绘制文字**/
+
+  /*   for(var i=0; i<4; i++){ */
+      var txt = $("#yzms").attr("value");
+      ctx.fillStyle = randomColor(50,160);  //随机生成字体颜色
+      ctx.font = randomNum(15,20)+'px SimHei'; //随机生成字体大小
+      var x = 20;
+      var y = randomNum(20,30);
+      var deg = randomNum(-45, 45);
+      //修改坐标原点和旋转角度
+      ctx.translate(x,y);
+      ctx.rotate(deg*Math.PI/180);
+      ctx.fillText(txt, 0,0);
+      //恢复坐标原点和旋转角度
+      ctx.rotate(-deg*Math.PI/180);
+      ctx.translate(-x,-y);
+ /*    } */
+    /* /**绘制干扰线**/
+     for(var i=0; i<3; i++){
+      ctx.strokeStyle = randomColor(40,180);
+      ctx.beginPath();
+      ctx.moveTo( randomNum(0,width), randomNum(0,height) );
+      ctx.lineTo( randomNum(0,width), randomNum(0,height) );
+      ctx.stroke();
+    } 
+    /**绘制干扰点**/
+   /*  for(var i=0; i<100; i++){
+      ctx.fillStyle = randomColor(0,255);
+      ctx.beginPath();
+      ctx.arc(randomNum(0,width),randomNum(0,height), 1, 0, 2*Math.PI);
+      ctx.fill();
+    }  */
+  }
+	$(":input").on("focus",function (){
+		$(".err.help-block").hide();
+	}) 
+	 $("#loginBtn").on("click",function(){
+		  $('#defaultForm').bootstrapValidator('validate');
+		  	if($('#defaultForm').data('bootstrapValidator').isValid()){  
+		  		$.ajax({
+		  		  url: "login.action",
+		  		  data:{
+		  			  username:$("input[name=loginname]").val(),
+		  			  password:$("input[name=password]").val()
+		  		  },
+		  		  success: function(response){
+		  			 console.log(response) 
+		  			if(response==1){
+		  				localStorage.clear();
+		  			  var url="main2.html?username="+$("input[name=loginname]").val();
+		  			  window.open(url,"_parent")
+		  			}else if(response==2){
+		  				$(".err.help-block").eq(0).hide();
+		  				$(".err.help-block").eq(1).show();
+		  				$("#password").parent().parent().removeClass("has-success").addClass("has-error")
+		  				$("#password").parent().next().removeClass("glyphicon-ok").addClass("glyphicon-remove")
+		  			    localStorage.setItem("justlevel", localStorage.getItem("justlevel")*1+1);
+		  				if(localStorage.getItem("justlevel")*1>=3){
+		  					$("#yanzheng1").show();
+		  					$("#yanzheng2").show();
+		  				}
+		  			}else{
+		  				$(".err.help-block").eq(1).hide();
+		  				$(".err.help-block").eq(0).show();
+		  				$("#loginname").parent().parent().removeClass("has-success").addClass("has-error")
+		  				$("#loginname").parent().next().removeClass("glyphicon-ok").addClass("glyphicon-remove")
+		  			}
+		  		  }
+		  		});
+			}
+	  })
+</script>
+
+</html>

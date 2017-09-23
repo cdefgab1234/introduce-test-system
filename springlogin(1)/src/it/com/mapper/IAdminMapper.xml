@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="it.com.dao">
+   
+   <!-- 登陆验证 --> 
+   <select id="selectAdminId" resultType="Map" parameterType="String">  
+      select name from user where name=#{name} 
+   </select>
+   <!-- 获取所有验证问题 -->
+   <select id="GetQusetion" resultType="Map">
+        select yzid,Security,type from security
+   </select>
+   <!-- 验证用户名是否已被注册,遍历所有管理员 -->
+   <select id="selectuserOn" resultType="Map" parameterType="String">
+        SELECT nameid,pass,NAME,sfzid,phone,email,logo,powerstate FROM USER WHERE NAME=#{name}
+   </select>
+   <!-- 注册新用户 -->
+   <insert id="InsertUser" parameterType="Map" >
+        insert into user (pass,name,sfzid,phone,email,logo) values(#{pass},#{name},#{sfzid},#{phone},#{email},#{logo})
+   </insert>
+   <!-- 注册新用户密保问题 -->
+   <insert id="InsertSecurity" parameterType="Map">
+      insert into securityuser (answer,yzid,nameid) values(#{answer},#{yzid},#{nameid})
+   </insert>
+   <!-- 根据用户id查询用户密保问题和答案 -->
+   <select id="FindQusetionByNameid" parameterType="Map" resultType="String">
+      SELECT su.yzid,s.Security FROM securityuser su INNER JOIN SECURITY s ON  s.yzid=su.yzid WHERE nameid=#{nameid}
+   </select>
+   <!-- 根据用户id查询用户密保问题和答案 -->
+   <select id="FindAnswerByNameid" parameterType="Map" resultType="Map">
+      SELECT su.answer FROM securityuser su INNER JOIN SECURITY s ON  s.yzid=su.yzid WHERE nameid=#{nameid} and su.yzid=#{yzid}
+   </select>
+   <!-- 增加新密保问题 -->
+   <insert id="InsertSecurityByAdmin" parameterType="Map">
+      insert into security (Security,type) values(#{Security},#{type})
+   </insert>
+   <!-- 删除密保问题 -->
+   <delete id="DeleteSecurityByYzid" parameterType="String">
+       delete from security where yzid=#{yzid}
+   </delete>
+   <!-- 修改密保问题 -->
+   <update id="UpdateSecurityByYzid" parameterType="Map">
+       update security set Security=#{Security},type=#{type} where yzid=#{yzid}
+   </update>
+   <!-- 终极管理员删除管理员 -->
+   <delete id="deletebyadmin" parameterType="int">
+       delete from user where nameid=#{nameid}  
+   </delete>
+   <delete id="deleteAllByAdmin" parameterType="int">
+       delete from securityuser where nameid=#{nameid} 
+   </delete>
+   <delete id="deletePowersByadmin" parameterType="int">
+       delete from userpower where nameid=#{nameid}
+   </delete>
+   <!-- 终极管理员修改管理选信息 -->
+   <update id="updatePowerstate" parameterType="int">
+       update user set phone=#{phone},sfzid=#{sfzid},email=#{email},logo=#{logo} where nameid=#{nameid}
+   </update>
+   <!-- 终极管理员分配权限 -->
+   <update id="editPowerstate">
+       UPDATE USER SET powerstate=#{powerstate} WHERE nameid=#{nameid}
+   </update>
+</mapper> 

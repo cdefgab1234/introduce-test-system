@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="powerState">  
+     <select id="selectNotHave" resultType="Map" parameterType="int">
+        SELECT powerid,powermodel,powerdetail FROM powerstate WHERE powerid NOT IN (
+		SELECT p.powerid FROM powerstate p INNER JOIN userpower u 
+		ON u.powerid=p.powerid 
+		WHERE u.nameid=#{nameid}
+		)
+     </select>
+     <!-- 遍历所有的权限 -->
+     <select id="selectAllPower" resultType="Map">
+        SELECT powerid,powermodel,powerdetail FROM powerstate
+     </select>
+     <!-- 查询当前用户的权限 -->
+     <select id="selectonePower" resultType="Map" parameterType="int">
+        SELECT p.powerid,p.powermodel,p.powerdetail FROM powerstate p INNER JOIN userpower u
+		ON p.powerid=u.powerid INNER JOIN user us ON us.nameid=u.nameid
+		 WHERE us.nameid=#{nameid}
+     </select>
+          <!-- 删除当前用户所有的权限 -->
+     <delete id="deletepowerBynameid" parameterType="int">
+        DELETE FROM userpower WHERE nameid =#{nameid}
+     </delete>
+     <!-- 增加用户的权限 -->
+     <insert id="insertpowersBynameid" parameterType="Map">
+        INSERT INTO userpower VALUES (#{nameid},#{powerid})
+     </insert>
+</mapper> 

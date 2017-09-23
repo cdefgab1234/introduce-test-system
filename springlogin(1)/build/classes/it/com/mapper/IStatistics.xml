@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="Statictic"> 
+   <!-- 获取分页的total --> 
+   <select id="findtotal" resultType="Map">
+      select count(1) as total from interview where score is not null
+   </select>
+   <!-- 遍历所有面试者信息 -->
+   <select id="selectAllInterview" resultType="Map" >
+       SELECT userid,username,userphone,email FROM interview  
+   </select>
+   
+   <!-- 动态sql -->
+   <select id="selectAll" resultType="Map" parameterType="Map">
+      select userid,username,usersource,position,score,costtime from interview
+      <where>
+         <if test="score!=null ">
+             and score>=#{score}
+         </if>
+         <if test="position!=null">
+             and position=#{position}
+         </if>
+         <if test="usersource!=null">
+             and usersource=#{usersource}
+         </if>
+         <if test="username!=null ">
+             and username like '%${username}%'
+         </if>
+      </where>
+   </select>
+   
+   <!-- 遍历面试者所有的来源 -->
+   <select id="selectBySource" resultType="Map">
+       select usersource from interview group by usersource
+   </select>
+   
+   <!-- 遍历所有的专业 -->
+   <select id="selectAllPosition" resultType="Map" >
+       select pos from profession
+   </select>
+   
+   <!-- 遍历所有提交成绩的面试者信息 -->
+   <select id="selectInterview" resultType="Map" parameterType="Map">
+       SELECT userid,username,usersource,position,score,costtime FROM interview where score is not null limit #{begin},#{size}
+   </select>
+</mapper>

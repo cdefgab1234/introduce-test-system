@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<mappers>
+	  <!-- 	注解  登录 注册 忘记密码 -->
+      <mapper class="it.com.dao.IusersDao"></mapper>
+      <!-- 用户管理 -->
+      <mapper resource="it/com/mapper/IAdminMapper.xml"></mapper>
+      <!--  试题管理 -->
+      <mapper resource="it/com/mapper/Ipapers.xml"></mapper>
+      <!-- 专业管理 -->
+      <mapper resource="it/com/mapper/Iprofession.xml"></mapper>
+        <!-- 面试管理 -->
+       <mapper resource="it/com/mapper/Iinterview.xml"></mapper> 
+         <!-- 统计管理 -->
+      <mapper resource="it/com/mapper/IStatistics.xml"></mapper>
+       <!-- 权限管理-->
+      <mapper resource="it/com/mapper/IPowerControl.xml"></mapper>
+      
+         <!-- 需求变更的修改Mapper -->
+   <!--    <mapper resource="it/com/mapper/editMapper.xml"></mapper> -->
+</mappers>
+    
+</configuration>
+
+
+

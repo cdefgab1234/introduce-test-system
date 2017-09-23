@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="it.com.dao">
+   		<!-- 面试管理sql修改 -->
+   		
+   		<!-- 遍历所有专业 -->
+   		 <select id="selectAllPos" resultType="Map">
+	      	SELECT pos FROM profession 
+	   </select>
+	   <!-- 遍历所有试题类型 -->
+   		 <select id="selectAlltype" resultType="Map">
+	      SELECT TYPE FROM choice GROUP BY type 
+	   </select>
+ 	   	<!-- 遍历所有各种试题对应的数量 -->
+   		<select id="selectAllCountByType" resultType="Map">
+	      	SELECT COUNT(1),TYPE FROM choice GROUP BY type
+	   </select> 
+	   	<!-- 遍历所有各种试题对应的数量 -->
+   		<select id="selectAllCountByType" resultType="Map">
+	      	SELECT COUNT(1),TYPE FROM choice GROUP BY type
+	   </select> 
+</mapper> 

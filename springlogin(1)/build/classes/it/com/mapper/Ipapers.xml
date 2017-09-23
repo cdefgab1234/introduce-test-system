@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="paper">  
+    <!-- 获取分页的total --> 
+   <select id="findtotal" resultType="Map">
+      select count(1) as total from choice
+   </select> 
+   <select id="findAll" resultType="Map" parameterType="Map">  
+      select * from choice  
+      <where>
+       <if test="diffculty!=null">
+        diffculty=#{diffculty}
+      </if> 
+      
+      <if test="position!=null">
+        and position=#{position}
+      </if> 
+      
+      <if test="kpoint!=null">
+        and kpoint=#{kpoint}
+      </if> 
+      <if test="type!=null">
+        and type=#{type}
+      </if> 
+      <if test="num!=null">
+        order by rand()  
+      </if> 
+      </where>
+         limit #{begin},#{size}  
+   </select>   
+   
+  <insert id="insertAll"  parameterType="Map">
+  insert into choice(detail,A,B,C,D,quesanswer,diffculty,position,kpoint,type) values(#{detail},#{A},#{B},#{C},#{D},#{quesanswer},#{diffculty},#{position},#{kpoint},#{type})
+  </insert> 
+  
+  <delete id="delete"  parameterType="String">
+  delete from choice where quesid=#{quesid}
+  </delete>  
+  
+  <update id="update" parameterType="Map" >
+   update choice set detail=#{detail}, A=#{A}, B=#{B}, C=#{C}, D=#{D}, quesanswer=#{quesanswer}, diffculty=#{diffculty}, position=#{position}, kpoint=#{kpoint}, type=#{type}  where quesid=#{quesid} 
+  </update> 
+  
+  <!-- 遍历录入试题的难度 -->
+  <select id="selectDiffcult" resultType="Map">
+      SELECT diffculty FROM choice GROUP BY diffculty
+  </select>
+  <!-- 遍历考点 -->
+  <select id="selectKpoint" resultType="Map" parameterType="String">
+      SELECT kpoint FROM choice where  position=#{position}  GROUP BY kpoint
+    
+      
+  </select>
+  <!-- 遍历录入试题类型 -->
+  <select id="selectType" resultType="Map">
+      SELECT type FROM choice GROUP BY type
+  </select>
+  
+    <insert id="insertparper" parameterType="Map">
+   insert into parper(userid,quesid,useranswer,answerResult) values(#{userid},#{quesid},#{useranswer},#{answerResult})
+  
+  </insert>
+  
+  <select id="findtype" parameterType="Map" resultType="Map">
+     select * from choice
+     <where>
+        <if test="diffculty!=null">
+         diffculty=#{diffculty}
+        </if> 
+         <if test="position!=null">
+          and position=#{position}
+        </if>   
+        <if test="type!=null">
+          and type=#{type}
+        </if>     
+     </where>    
+      order by type limit 0,#{num}
+  </select>
+</mapper> 

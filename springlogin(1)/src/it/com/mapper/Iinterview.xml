@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="interview">  
+
+   <!-- 初始化个数分页total的总个数 -->
+   <select id="findtotal" resultType="Map">
+       select count(1) as total from interview
+   </select>
+
+	<select id="findPhoneYzState" resultType="Map">
+        SELECT phoneYzState FROM interview GROUP BY phoneYzState
+   </select>
+    <update id="updatePhoneYzState" parameterType="map">
+   		UPDATE interview SET phoneYzState=#{phoneYzState} 
+  	</update>
+
+   <select id="findAll" resultType="Map" parameterType="Map">  
+      select 
+      <if test="questionstype==null">
+      *
+      </if> 
+      
+      <if test="questionstype!=null">
+      questionstype,position
+      </if> 
+            
+       from interview    
+      <if test="userphone!=null">
+        where userphone=#{userphone}
+      </if> 
+
+       <if test="userid!=0">
+        and userid=#{userid}
+      </if> 
+      
+      <if test="username!=null">
+        and username=#{username}
+      </if> 
+      
+
+      <if test="usersource!=null">
+        and usersource=#{usersource}
+      </if> 
+      <if test="email!=null">
+        and email=#{email}
+      </if> 
+      <if test="scorel!=null">
+        and score=#{score}
+      </if> 
+      <if test="costtime!=null">
+        and costtime=#{costtime}
+      </if>   
+      <if test="position!=null">
+        and position=#{position}
+      </if>   
+      limit #{begin},#{size}                   
+   </select>   
+   
+  <insert id="insertAll"  parameterType="Map">
+  insert into interview(username,userphone,usersource,email,position,questionsdifficulty,qusetionCount,otherPos) values(#{username},#{userphone},#{usersource},#{email},#{position},#{questionsdifficulty},#{qusetionCount},#{otherPos})
+  </insert> 
+  
+  <delete id="delete"  parameterType="Int">
+  delete from interview where userid=#{userid}
+  </delete>  
+  
+  <insert id="inserttime" parameterType="Map" >
+   UPDATE interview  SET  score=#{score},costtime=#{costtime}  WHERE userid=#{userid}
+  </insert>
+  <!-- 修改面试者的信息 -->
+  <update id="updateInterviews" parameterType="map">
+     UPDATE interview SET userphone=#{userphone},usersource=#{usersource},email=#{email},score=#{score}
+     WHERE userid=#{userid}
+  </update>
+  
+ 
+</mapper> 

@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Insert title here</title>
+
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"></link>
+  	<link rel="stylesheet" href="bootstrap/dist/css/bootstrapValidator.css"/>	
+  	<script type="text/javascript" src="js/jq.js"></script>
+  	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+	<script src="js/vue-resource.js"></script>
+	<script src="js/vue-router.min.js"></script>
+	<script type="text/javascript" src="bootstrap/dist/js/bootstrapValidator.js"></script>
+	
+	<script src="js/common.js"></script>
+	<link rel="stylesheet" href="css/main.css" />
+	<link rel="stylesheet" href="css/animate.css" />
+
+	<script src="outexceljs/xlsx.core.min.js"></script>
+	<script src="outexceljs/blob.js"></script>
+	<script src="outexceljs/FileSaver.min.js"></script>
+	
+	<script type="text/javascript" src="js/bootstrap-filestyle.min.js"></script>
+	
+	<script src="outexceljs/tableexport.js"></script>
+	<script type="text/javascript" src="js/main2.js"></script>
+
+
+
+
+</head>
+<body >
+   <div id="cont" v-cloak>
+		<div class="container-fluid" id="top">
+			<div>
+				<div class="pull-left imgbox">
+					<img src="images/logo.png" style="width: 225px;"/>
+				</div>
+				<div class=" pull-right top-navbox">
+				<div class="tpl-header-switch-button pull-left" v-on:click="showListNav()">
+                    <span class="glyphicon glyphicon-align-justify">
+                </span>
+                </div>
+					<ul  class="nav navbar-nav">
+						<li >欢迎你，{{username}}</li>
+						<li>
+							<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+						</li>
+						<li>
+							<span class="glyphicon glyphicon-bell " aria-hidden="true"></span>
+						</li>
+						<li>
+							<a href="index.html" style="padding:0;line-height:32px;">
+								<span class="glyphicon glyphicon-log-out " aria-hidden="true"></span>
+								退出
+								</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid" id="content">
+			<div class=" nav-left left-sidebar">
+			<div class="left-user-panel text-center">
+				<div class="tpl-user-panel-profile-picture">
+                    <img   :src="userlogo"  alt="">
+                </div>
+                <span>
+                <span v-if="username">超级管理员：</span><span>{{username}}</span>
+                </span><br/>
+                <span class="tpl-user-panel-action-link"    data-toggle="modal" data-target="#edituser" >
+                	 <span class="glyphicon glyphicon-cog"></span>    账号设置
+                </span>
+			</div>
+			 <ul class="nav navbar-nav">
+
+	           		<li>
+           				<router-link to="/userAdministration">
+			           				<span class="glyphicon glyphicon-user"></span>
+			           				用户管理
+           				</router-link>
+	           		</li>
+	           		<li>
+           				<router-link to="/InterviewAdministration">
+			           				<span class="glyphicon glyphicon-pencil"></span>
+			           				面试管理
+           				</router-link>
+	           		</li>
+	           		<li>
+           				<router-link to="/ProfessionalAdministration">
+			           				<span class="glyphicon glyphicon-book"></span>
+			           				专业管理
+           				</router-link>
+	           		</li>
+	           		<li v-if="username=='admin'">
+           				<router-link to="/JurisdictionAdministration">
+			           				<span class="glyphicon glyphicon-wrench"></span>
+			           				权限管理
+           				</router-link>
+	           		</li>
+	           		<li>
+           				<router-link to="/QuestionsAdministration">
+			           				<span class="glyphicon glyphicon-file"></span>
+			           				试题管理
+           				</router-link>
+	           		</li>
+	           		<li>
+           				<router-link to="/StatisticsAdministration">
+			           				<span class="glyphicon glyphicon-calendar"></span>
+			           				统计管理
+           				</router-link>
+	           		</li>
+	           </ul>
+            </div>
+		<!-- <div style="margin:20px;"> -->
+			<div  id="box" >
+				 <transition enter-active-class="animated lightSpeedIn" leave-active-class="animated lightSpeedOut">
+	                <router-view></router-view>
+	            </transition>
+			</div>
+		<!-- </div> -->
+		
+       
+
+   	 	</div>
+    	<!--模态框 弹出框修改--开始-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="edituser">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                             <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>修改问题</h4>
+                    </div>
+                     <div class="modal-body"> 
+			            <form role="form" class="defaultForm1">
+				            <div class="form-group">
+				                <label >用户名:</label>
+				                <input type="text"  class="form-control" placeholder="输入用户名" v-model="username" disabled>
+				            </div>
+				            <div class="form-group">
+				                <label >手机号:</label>
+				                <input type="text" name="phone" class="form-control" placeholder="输入问题手机号"  v-model="phone">
+				            </div>
+				             <div class="form-group">
+				                <label >邮箱:</label>
+				                <input type="text" name="email" class="form-control" placeholder="输入邮箱" v-model="email" >
+				            </div>
+				            
+				             <div class="form-group">
+				                <label >身份证:</label>
+				                <input type="text" name="sfzid" class="form-control" placeholder="输入身份证号"  v-model="sfzid">
+				            </div>
+				            
+				             <div class="form-group">
+		                        <label >头像:</label>
+		                        <div>
+								   <select name="imagesPic" id="imgagesPic" class="form-control pull-left" style="width:80px;margin-right:10px;" v-model="logo">
+									 		<option value="images/1.jpg">1</option>
+									 		<option value="images/2.jpg">2</option>
+									 		<option value="images/3.jpg">3</option>
+									 		<option value="images/4.jpg">4</option>
+									 		<option value="images/5.jpg">5</option>
+									 		<option value="images/6.jpg">6</option>
+									 		<option value="images/7.jpg">7</option>
+									 		<option value="images/8.jpg">8</option>
+									 </select>
+									
+									 <img  :src="logo" class="img-thumbnail " width="50" height="50" >
+		                        </div>
+		                    </div>
+				        </form>
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  v-bind:data-dismiss="modelstate" class="btn btn-danger btn-sm" v-on:click="editMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--模态框 弹出框修改--结束-->
+    </div>
+    
+    
+  <!--   用户管理增删该查组件 -->
+    <template id="model1">
+    <div>
+        <span class="h3 ">用户信息表  </span>
+			          <br/>
+			       <!--  <button v-if="userstate!='一级权限'" class="btn btn-success btn-sm" data-toggle="modal" data-target="#add" style="margin-top:20px;"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>  添加</button>
+			        <hr> -->
+			        <table class="table " style="margin-top:20px;">
+			           
+			            <tr class="text-danger">
+			                <th class=" text-left">用户名</th>
+			                <th class=" text-left">手机号</th>
+			                <th class=" text-left">邮箱</th>
+			                <th class=" text-left">身份证</th>
+			                <th v-if="deleteUser==true"  class=" text-left">操作</th>
+			            </tr>
+			            <tr class=" text-left" v-for="(val,index) in myData"  :key="index">
+			                <td >{{val.name}}</td>
+			                <td>{{val.phone}}</td>
+			                <td >{{val.email}}</td>
+			                <td >{{val.sfzid}}</td> 
+
+			                <td  v-if="deleteUser==true"  >
+			                    <button class="btn danger btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nameid=val.nameid" aria-label="Left Align"><span class="glyphicon glyphicon-trash " aria-hidden="true"></span>   删除</button>
+			                </td>
+			            </tr>
+			           
+			            <tr v-show="myData.length==0">
+			                <td colspan="4" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+					<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous"  v-on:click="changPage(begin+=-1)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next" v-on:click="changPage(begin+=1)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"  v-on:click="changPage(total)">尾页</a></li>
+					  </ul>
+					</nav>
+		
+        <!--模态框 弹出框 删除-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" v-on:click="nowname=''">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除问题</h4>
+                      
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4>确认删除吗？</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm"  v-on:click="nowname=''">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" v-on:click="deleteMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        </div>
+     
+    </template>
+
+   <!--  面试管理增删该查组件 -->
+	 <template id="model2">
+	 	<div>
+	 		
+	 					<span class="h3 ">面试管理信息表</span>
+					<hr/>
+			        <button v-if="addPeople==true" class="btn btn-success btn-sm" data-toggle="modal" data-target="#interviewadd" ><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>  添加</button>
+			        <hr/>
+			        <div  class="checkbox"><label><input type="checkbox" data-toggle="modal" id="checkStateByphnoe" data-target="#phoneYzmState" :checked="yzmState" >在线测试开启手机验证码</label></div>
+			        <table class="table " style="margin-top:20px;">
+			           
+			            <tr class="text-danger">
+			                <th class="text-center">姓名</th>
+			                <th class="text-center">电话</th>
+			                <th class="text-center">来源</th>
+			                <th class="text-center">邮箱</th>
+			                <th class="text-center">专业</th>
+			                <th v-if="deletepeople==true||updatePeople==true" class="text-center">操作</th>
+			            </tr>
+			            <tr class="text-center" v-for="(val,index) in myData"  :key="index">
+			                <td>{{val.username}}</td>
+			                <td>{{val.userphone}}</td>
+			                <td>{{val.usersource}}</td>
+			                <td>{{val.email}}</td>
+			                <td>{{val.position}}</td>
+			                <td v-if="deletepeople==true||updatePeople==true">
+			                   
+			                    <button v-if="deletepeople==true" class="btn danger btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=index,userid=val.userid" aria-label="Left Align"><span class="glyphicon glyphicon-trash " aria-hidden="true"></span>   删除</button>
+			               	  <button v-if="updatePeople==true" class="btn primary btn-sm" data-toggle="modal" data-target="#editbox"v-on:click="username=val.username,userphone=val.userphone,userid=val.userid,usersource=val.usersource,email=val.email,thisscore=val.score"  aria-label="Left Align"> <span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>  修改</button>
+			              
+			                </td>
+			            </tr>
+			           
+			            <tr v-show="myData.length==0">
+			                <td colspan="6" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+				<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous" v-on:click="changPage(begin-=1)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next"  v-on:click="changPage(begin+=1)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"    v-on:click="changPage(total)">尾页</a></li>
+					  </ul>
+					</nav>
+		<!--模态框 弹出框增加-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="interviewadd">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" >
+                             <span>&times;</span>
+                        </button>
+                        
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>添加面试信息</h4>
+                    </div>
+                    <div class="modal-body " style="overflow:hidden">
+                       <form role="form" class="defaultForm">
+                         <label class="h4 ">面试资料添加</label>
+				            <div class="form-group">
+				                <label >姓名:</label>
+				                <input type="text" name="username" class="form-control" placeholder="输入姓名" v-model="username">
+				            </div>
+				            <div class="form-group">
+				                <label >电话:</label>
+				                <input type="text" name="userphone" class="form-control" placeholder="输入电话" v-model="userphone">
+				            </div>
+				             <div class="form-group">
+				                <label >来源:</label>
+				                <input type="text" name="usersource" class="form-control" placeholder="输入来源" v-model="usersource">
+				            </div>
+				            <div class="form-group">
+				                <label >邮箱:</label>
+				                <input type="text" name="email" class="form-control" placeholder="输入邮箱" v-model="email">
+				            </div>
+				          	
+				          	 
+				             <label class="h4 ">面试考题编辑</label>
+				            <div class="form-group">
+				                <label >请选择专业</label>
+							      <select  class="form-control" name="que_position"   v-model="thisquestions_position" >
+							 			<option v-for="(val,index) in questions_position">
+						 					{{val.pos}}
+						 				</option>
+								 </select>
+				            </div>
+				             <div class="form-group">
+				                <label >请选择试题难度</label>
+							      <select  class="form-control" name="que_diffculty" v-model="thisDiffculty" >
+							   			<option value="">请选择试题难度</option>
+								 		<option v-for="(val,index) in questions_diffculty">
+						 						{{val.diffculty}}
+						 					</option>
+								 </select>
+				            </div>
+				            <div class="form-group">
+				                <label >请输入试题数量</label>
+				                <input type="text" name="que_count" class="form-control" placeholder="输入试题数量" v-model="thisquestions_count">
+				            </div>	
+				            <label class="h4 ">其他试题编辑(选填)</label>
+				           	<div class="form-group">
+				                <label >请选择专业</label>
+							      <select  class="form-control"   v-model="otherquestions_position" >
+							 			<option v-for="(val,index) in questions_position">
+						 					{{val.pos}}
+						 				</option>
+								 </select>
+				            </div>
+				             <div class="form-group">
+				                <label >请选择试题难度</label>
+							      <select  class="form-control"  v-model="otherDiffculty" >
+							   			<option value="">请选择试题难度</option>
+								 		<option v-for="(val,index) in questions_diffculty">
+						 						{{val.diffculty}}
+						 					</option>
+								 </select>
+				            </div>
+				            <div class="form-group">
+				                <label >请输入试题数量</label>
+				                <input type="text"  class="form-control" placeholder="输入试题数量" v-model="otherquestions_count">
+				            </div>				            
+				        </form>
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  v-bind:data-dismiss="modelstate"   class="btn btn-danger btn-sm" v-on:click="addMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!--模态框 弹出框修改-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="editbox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" >
+                             <span>&times;</span>
+                        </button>
+                        
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>修改面试信息</h4>
+                    </div>
+                    <div class="modal-body " style="overflow:hidden">
+                       <form role="form" class="defaultFormedit">
+				            <div class="form-group">
+				                <label >姓名:</label>
+				                <input type="text" name="username" class="form-control" placeholder="输入姓名" v-model="username" disabled>
+				            </div>
+				            <div class="form-group">
+				                <label >电话:</label>
+				                <input type="text" name="userphone" class="form-control" placeholder="输入电话" v-model="userphone">
+				            </div>
+				             <div class="form-group">
+				                <label >来源:</label>
+				                <input type="text" name="usersource" class="form-control" placeholder="输入来源" v-model="usersource">
+				            </div>
+				            <div class="form-group">
+				                <label >邮箱:</label>
+				                <input type="text" name="email" class="form-control" placeholder="输入邮箱" v-model="email">
+				            </div>
+				          	 <div class="form-group">
+				                <label >分数:</label>
+				                <input type="text" name="score" class="form-control" placeholder="输入分数" v-model="thisscore">
+				            </div>		            
+				        </form>
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  v-bind:data-dismiss="modelstate"   class="btn btn-danger btn-sm" v-on:click="editineterview()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!--模态框 弹出框 删除-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="phoneYzmState">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title text-danger"><span class="glyphicon glyphicon-exclamation-sign " aria-hidden="true"></span>消息提醒</h4>
+                    </div>
+                    <div class="modal-body text-center text-danger"> 
+			            <h4 v-if="yzmState==false">确认开启在线测试手机验证码功能吗？</h4> 
+			            <h4 v-if="yzmState==true">确认关闭在线测试手机验证码功能吗？</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" @click="nochangephoneYzmState">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" @click="phoneYzmState">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+	 		
+	 	  <!--模态框 弹出框 在线测试状态修改提示框-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4>确认修改</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" v-on:click="deleteMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+	 	</div>
+	 </template>
+  <!-- 专业管理增删该查组件 -->
+	 <template id="model3">
+	 	<div>
+	 		
+	 		<span class="h3 ">专业信息表</span>
+					<hr/>
+			        <button v-if="addpos==true" class="btn btn-success btn-sm" data-toggle="modal" data-target="#add"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>  添加</button> 
+			        <!-- <hr> -->
+			        <table class="table " style="margin-top:20px;">
+			           
+			            <tr class="text-danger">
+			                <th class="text-center">专业名称</th>
+			                <th class="text-center">创建时间</th>
+			                <th class="text-center">试题数量</th>
+			                <th v-if="deletpos==true" class="text-center">操作</th>
+
+			            </tr>
+			            <tr class="text-center" v-for="(val,index) in myData"  :key="index">
+			                <td>{{val.pos}}</td>
+                            <td>{{val.edittime}}</td>
+                            <td>{{val.qusetionsCount}}</td>
+			                <td v-if="deletpos==true">
+			                    <button  class="btn danger btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=index,pos=val.pos" aria-label="Left Align"><span class="glyphicon glyphicon-trash " aria-hidden="true"></span>   删除</button>
+			  
+			                </td>
+			            </tr>
+			           
+			            <tr v-show="myData.length==0">
+			                <td colspan="4" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+					<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous" v-on:click="changPage(begin-=1)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next"  v-on:click="changPage(begin+=1)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"    v-on:click="changPage(total)">尾页</a></li>
+					  </ul>
+					</nav>
+		<!--模态框 弹出框增加-->
+        <div role="dialog" class="modal fade bs-example-modal-sm ProfessionalAdministrationAdd " id="add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" v-on:click="pos=''">
+                             <span>&times;</span>
+                        </button>
+                        
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>添加专业</h4>
+                    </div>
+                    <div class="modal-body ">
+                       <form role="form" class="defaultForm ProfessionalAdministration">
+				            <div class="form-group">
+				                <label >专业:</label>
+				                <input type="text" name="professionpro" class="form-control" placeholder="输入专业" v-model="pos">
+				            </div>
+				        </form>
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" v-on:click="pos=''">取消</button>
+                        <button  v-bind:data-dismiss="modelstate"   class="btn btn-danger btn-sm" v-on:click="addMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--模态框 弹出框 删除-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除问题</h4>
+                      
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4>确认删除吗？</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" v-on:click="deleteMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--模态框 弹出框修改-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="edit">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" v-on:click="wenti='',nowyzid='',type=''">
+                             <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>修改问题</h4>
+                    </div>
+                     <div class="modal-body"> 
+			            <form role="form" class="defaultForm1">
+				            <div class="form-group">
+				                <label >专业:</label>
+				                <input type="text" name="professionpro" class="form-control" placeholder="输入专业" v-model="pos">
+				            </div>
+				          
+				        </form>
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" v-on:click="wenti='',nowyzid='',type=''">取消</button>
+                        <button v-bind:data-dismiss="modelstate" class="btn btn-danger btn-sm" v-on:click="editMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+	 		
+	 		
+	 	</div>
+	 </template>
+	 <!--  权限管理-->
+	 <template id="model4">
+	 	<div  >
+        <span class="h3 ">权限管理表</span>
+			          <br/>
+			       <!--  <button v-if="userstate!='一级权限'" class="btn btn-success btn-sm" data-toggle="modal" data-target="#add" style="margin-top:20px;"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>  添加</button>
+			        <hr> -->
+			        <table class="table " style="margin-top:20px;">
+			           
+			            <tr class="text-danger">
+			                <th class=" text-left">用户名</th>
+			                <th class=" text-left">权限等级</th>
+			                <th class=" text-left">操作</th>
+			            </tr>
+			            <tr class=" text-left" v-for="(val,index) in myData"  :key="index">
+			                <td >{{val.name}}</td>
+			                <td >{{val.powerstate}}</td>
+			                <td>
+			                    
+			                    
+			                    <button class="btn primary btn-sm" data-toggle="modal" data-target="#editpowerstate"v-on:click="editPower(val.nameid)"  aria-label="Left Align"> <span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>  修改</button>
+			                </td>
+			            </tr>
+			           
+			            <tr v-show="myData.length==0">
+			                <td colspan="3" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+					<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous"  v-on:click="changPage(begin+=-1)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next" v-on:click="changPage(begin+=1)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"  v-on:click="changPage(total)">尾页</a></li>
+					  </ul>
+					</nav>
+		
+        <!--模态框 弹出框 修改权限-->
+        <div role="dialog" class="modal fade bs-example-modal-sm " id="editpowerstate">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" >
+                             <span>&times;</span>
+                        </button>
+                        
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>修改权限</h4>
+                    </div>
+                    <div class="modal-body text-center">
+                    <div class='row'>
+                    	<div class="col-md-5">	
+                    		<span class="h4">未拥有权限</span>
+                    		<ul class="list-unstyled allpowerUl"  >
+                    			<li v-for="item in Nopowers" :title="item.powermodels"  @click="addpowerLi(item)"  :class="{'active':item.show===true}">
+                    					<label>{{item.powermodels}}</label>{{item.powerdetails}}
+			 						<!-- Step 3 -->
+			                       <!--  <div class="panel panel-default">
+			                            <div class="panel-heading">
+			                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#steps" :href="val.href">{{index}}</a></h4>
+			                            </div>
+			                            <div :id="val.id" class="panel-collapse collapse">
+			                                <div class="panel-body">
+			                                   <ul class="list-unstyled">
+			                                   		<li v-for="(val,index) in allpower[index]['cont']" :class="{active:index==thisactive}"  @click="changeClass(index)">{{val}}</li>
+			                                   </ul>
+			                                </div>
+			                            </div>
+		                        	</div> -->
+                    			</li>
+                    		</ul>
+                    	</div>
+                    	<div class="col-md-2">
+                    		<ul class="list-unstyled " style="margin-top:80px;">
+                    			<li>
+                    				<button type="button" class="btn btn-success btn-sm"  @click="addPower">
+									  <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" ></span>
+									</button>
+                    			</li>
+                    			<li style="margin-top:20px;">
+                    				<button type="button" class="btn btn-danger btn-sm" @click="deletePower">
+									  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+									</button>
+                    			</li>
+                    		</ul>
+                    	</div>
+                    	<div class="col-md-5">
+                    		<span class="h4">我的权限</span>
+                    		<ul class="list-unstyled mypowerUl" >
+                    			<li v-for="item in thisuserpowerstate"  @click="delpowerLi(item)"  :class="{'active':item.show===true}">
+                    			<label>{{item.powermodels}}</label>{{item.powerdetails}}
+			 						<!-- Step 3 -->
+			                        <!-- <div class="panel panel-default">
+			                            <div class="panel-heading">
+			                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="mystep" :href="val.href">{{index}}</a></h4>
+			                            </div>
+			                            <div :id="val.id" class="panel-collapse collapse">
+			                                <div class="panel-body">
+			                                   <ul class="list-unstyled">
+			                                   		<li v-for="(val,index) in allpower[index]['cont']">{{val}}</li>
+			                                   </ul>
+			                                </div>
+			                            </div>
+		                        	</div> -->
+                    			</li>
+                    		</ul>
+                    	</div>
+                    </div>
+                      <!--  <form role="form" class="defaultForm1 ProfessionalAdministration">
+				            <div class="form-group">
+				                <label>用户名:</label>
+				                <input disabled="disabled" class="form-control" type="text" v-model="name">
+				                <label >请选择要更改的权限:</label>
+				                <!-- <input type="text" name="editpowerstate" class="form-control" placeholder=""> 
+				                <select  class="form-control" name="editpowerstate"  v-model="powerstate" >
+	
+						   			<option value="1">一级权限</option>
+						   			<option value="2">二级权限</option>
+						   			<option value="3">三级权限</option>
+							 		
+						        </select>
+				            </div>
+				        </form> -->
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  data-dismiss="modal"   class="btn btn-danger btn-sm" v-on:click="updatePower">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        </div>
+	 </template>
+	 <!--试题管理组件  -->
+	 <template id="model5">
+	 	<div>
+	 		<span class="h3 ">{{tableName}}</span>
+					<hr/>
+			          <div class="form-group col-md-1" style=" padding-left:0px;margin-right:15px;">
+			        	 <button v-if="addqusetions==true" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addqusetion"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>  添加</button>
+					  </div>
+			         <form v-if="searchquestions==true" class="form-horizontal" style="overflow: hidden;">
+					  <div class="form-group col-md-3">
+					      <select  class="form-control" name="questions_diffculty" v-model="thisDiffculty" >
+					   			<option value="请选择试题难度">请选择试题难度</option>
+						 		<option v-for="(val,index) in questions_diffculty">
+						 				{{val.diffculty}}
+						 		</option>
+						 </select>
+					  </div>
+					  <div class="form-group col-md-2">
+					        <select  class="form-control" name="questions_position" @change="changePos"  v-model="thisquestions_position" >
+						   			<option value="请选择专业">请选择专业</option>
+							 		<option v-for="(val,index) in questions_position">
+						 				{{val.pos}}
+						 			</option>
+							 </select>
+					  </div>
+					  <div class="form-group col-md-2" name="questions_kpoint"  >
+						   <select  class="form-control" v-model="thisquestions_kpoint">
+						   			<option value="请选择考点">请选择考点</option>
+						   			<option v-for="(val,index) in questions_kpoint">
+						 				{{val.kpoint}}
+						 			</option>
+							 </select>
+					  </div>
+					  
+					   <div class="form-group col-md-3" >
+					        <select  class="form-control" name="questions_type" v-model="thisquestions_type" >
+					   			<option value="请选择试题类型">请选择试题类型</option>
+					   			<option v-for="(val,index) in questions_type">
+						 				{{val.type}}
+						 		</option>
+						 	
+						 </select>
+					  </div>
+					  
+					  <div class="form-group col-md-2">
+					       <button type="button" class="btn btn-success" aria-label="Left Align" v-on:click="searchMsg">
+							 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+							    搜索
+							</button>
+					  </div>
+					</form>
+
+					<div v-if="ImportExcel==true" class="col-md-5" style="padding-left:0;">
+						<form  id="uploadForm">
+							<div class="form-group">
+								<input type="file" name="myfile" id="myfile"  @change="fileChange()" >
+							</div>
+				         <!-- <input type="file" name="myfile" id="myfile"  @change="fileChange($event)"/> -->
+				      </form>
+					</div> 
+					
+						
+			        <table class="table">
+			           
+			            <tr class="text-danger">
+			                <th class="text-center checkbox" index=0  @change="outExcelColum($event)" >
+			                	<label> <input type="checkbox" checked/> 序号</label>
+			                </th>
+			                 <th class="text-center checkbox" index=1  @change="outExcelColum($event)" checked>
+							 	<label> <input type="checkbox" checked/> 问题</label>
+			                </th>
+			                 <th class="text-center checkbox" index=2 @change="outExcelColum($event)">
+							 	<label> <input type="checkbox" checked/> 类型</label>
+			                </th>
+			                 <th  v-if="delqusetions==true||updatequestions==true" class="text-center checkbox" index=3  @change="outExcelColum($event)">
+							 	<label> <input type="checkbox" checked/> 操作</label>
+			                </th>
+			            </tr>
+			            <tr v-if="searchControll==true" v-show="index<(searchThisPageIndex+size)&&index>=searchThisPageIndex" class="text-center" v-for="(val,index) in myData"  :key="index">
+			             <td>{{val.quesid}}</td>
+                         <td>{{val.detail}}</td>
+                         
+                      <!--      <td>{{val.diffculty}}</td>
+                           <td>{{val.position}}</td> -->
+                           
+                         <td>{{val.type}}</td>
+			                <td v-if="delqusetions==true||updatequestions==true">
+			                    <button v-if="delqusetions==true"  class="btn danger btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=index,nowquesid=val.quesid" aria-label="Left Align"><span class="glyphicon glyphicon-trash " aria-hidden="true"></span>   删除</button>			           
+			                    <button v-if="updatequestions==true" class="btn primary btn-sm"  v-on:click="editQusetions(index,val.detail,val.A,val.B,val.C,val.D,val.quesanswer,diffculty=val.diffculty,val.position,val.kpoint,val.type,val.quesid)" aria-label="Left Align"> <span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>  修改</button>
+			                </td>
+			            </tr>
+			           	 <tr v-if="searchControll==false" class="text-center" v-for="(val,index) in myData"  :key="index">
+			             <td>{{val.quesid}}</td>
+                         <td>{{val.detail}}</td>
+                         
+                         <!--   <td>{{val.diffculty}}</td>
+                           <td>{{val.position}}</td> -->
+                           
+                         <td>{{val.type}}</td>
+			                <td v-if="delqusetions==true||updatequestions==true">
+			                    <button v-if="delqusetions==true"  class="btn danger btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=index,nowquesid=val.quesid" aria-label="Left Align"><span class="glyphicon glyphicon-trash " aria-hidden="true"></span>   删除</button>			           
+			                    <button v-if="updatequestions==true" class="btn primary btn-sm"  v-on:click="editQusetions(index,val.detail,val.A,val.B,val.C,val.D,val.quesanswer,diffculty=val.diffculty,val.position,val.kpoint,val.type,val.quesid)" aria-label="Left Align"> <span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>  修改</button>
+			                </td>
+			            </tr> 
+			            <tr v-if="myData.length==0">
+			                <td colspan="4" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+					<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1,searchControll,0)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous" v-on:click="changPage(begin-=1,searchControll,-10)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next"  v-on:click="changPage(begin+=1,searchControll,10)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"    v-on:click="changPage(total,searchControll,searchtotal)">尾页</a></li>
+					  </ul>
+					</nav>
+		<!--模态框 弹出框增加-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="addqusetion">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" v-on:click="detail='',A='',B='',C='',D='',quesanswer='',diffculty='',position='',kpoint='',type='',quesid=''">
+                             <span>&times;</span>
+                        </button>
+                        
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-plus " aria-hidden="true"></span>添加问题</h4>
+                    </div>
+                    <div class="modal-body ">
+                       <form role="form" class="defaultForm">
+                       
+					            <div class="form-group">
+					                <label >题目:</label>
+					                <input type="text" name="choicedetail" class="form-control" placeholder="" v-model="detail">
+					            </div>
+					            <div class="form-group">
+					                 <label >试题类型:</label>
+					                 <select  class="form-control" name="choicetype" v-model="type" >
+							   			<option >选择题</option>
+							   			<option >多选题</option>
+							   			<option >判断题</option>
+								 		  <!--  <option   v-for="(val,index) in allposition"  :key="index">{{val.pos}}</option> -->
+								    </select>
+					            </div> 
+					            
+					            <div v-if="type=='选择题'||type=='多选题'" class="form-group">
+					                <label >选项A:</label>
+					                <input type="text" name="choicea" class="form-control" placeholder="" v-model="A">
+					            </div>
+					            
+					            
+		 			              <div v-if="type=='选择题'||type=='多选题'"  class="form-group">
+					            	<label >选项B:</label>
+					                <input type="text" name="choiceb" class="form-control" placeholder="" v-model="B">
+					            </div>
+					            
+					            
+					            <div v-if="type=='选择题'||type=='多选题'" class="form-group">
+					                <label >选项C:</label>
+					                <input type="text" name="choicec" class="form-control" placeholder="" v-model="C">
+					            </div>
+					            			
+					            <div v-if="type=='选择题'||type=='多选题'"  class="form-group">	
+					            	 <label >选项D:</label>
+					                <input type="text" name="choiced" class="form-control" placeholder="" v-model="D">
+					            </div>
+					            
+					            
+					            <div class="form-group">
+					                <label >正确答案:</label>
+					                <input type="text" name="choicequesanswer"  class="form-control" placeholder="" v-model="quesanswer">
+					            </div>
+					            
+					            <div class="form-group">
+					            <label >难度:</label>
+					                <input type="text" name="choicediffcult" class="form-control" placeholder="" v-model="diffculty">
+					            </div>
+					            
+					            <div class="form-group">
+					                <label >专业:</label>
+					                <input type="text" name="choiceposition" class="form-control" placeholder="" v-model="position">
+					            </div>
+					            
+					             <div class="form-group">
+					            <label >考点:</label>
+					                <input type="text" name="choicekpoint" class="form-control" placeholder="" v-model="kpoint">
+					            </div>
+					            
+					            
+					            
+				   
+				        </form>
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  v-bind:data-dismiss="modelstate"   class="btn btn-danger btn-sm" v-on:click="addMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--模态框 弹出框 删除-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除问题</h4>
+                      
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4>确认删除吗？</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" v-on:click="deleteMsg()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--模态框数据导入框-->
+        <div role="dialog" class="modal fade bs-example-modal-sm" id="ImportDataBox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>导入Excel数据</h4>
+                      
+                    </div>
+                    <div class="modal-body text-center"> 
+			            <h4>确认导入此文件数据吗？</h4> 
+			        </div> 
+                    <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+                        <button data-dismiss="modal" class="btn btn-danger btn-sm" @click="ImportData">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+               <!-- 模态框（Modal）导入结果通知 -->
+	<div class="modal fade" id="notImportDataMsg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                 <h4 class="modal-title">导入提醒</span></h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-danger text-center" >
+                	<ul class="list-unstyled" v-for="(val,index) in errImportData">
+	                	<li>
+                			<span class="glyphicon glyphicon-remove " aria-hidden="true"></span>第<span >{{val.errData}}</span>行数据格式错误,导入失败
+	                	</li>
+                	</ul>
+                </h4> 
+            </div>
+             <div class="modal-footer text-right">
+                   <button data-dismiss="modal" class="btn btn-success btn-sm">我知道了</button>
+               </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+      <!--模态框 弹出框修改-->
+	   <div class="modal fade" id="editQusetionsBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+	                    &times;
+	                </button>
+	                <h4 class="modal-title"><span class="glyphicon glyphicon-pencil " aria-hidden="true"></span>修改问题</h4>
+	            </div>
+	            <div class="modal-body">
+	                  <form role="form" class="defaultForm1">
+						            <div class="form-group">
+						                <label >题目:</label>
+						                <input type="text" name="choicedetail" class="form-control" placeholder="" v-model="detail">
+						            </div>
+						            <div class="form-group">
+						                 <label >试题类型:</label>
+						                 <select  class="form-control" name="choicetype" v-model="type" >
+								   			<option >选择题</option>
+								   			<option >多选题</option>
+								   			<option >判断题</option>
+									 		  <!--  <option   v-for="(val,index) in allposition"  :key="index">{{val.pos}}</option> -->
+									    </select>
+						            </div> 
+						            
+						            <div v-if="type=='选择题'||type=='多选题'" class="form-group">
+						                <label >选项A:</label>
+						                <input type="text" name="choicea" class="form-control" placeholder="" v-model="A">
+						            </div>
+						            
+						            
+			 			              <div v-if="type=='选择题'||type=='多选题'"  class="form-group">
+						            	<label >选项B:</label>
+						                <input type="text" name="choiceb" class="form-control" placeholder="" v-model="B">
+						            </div>
+						            
+						            
+						            <div v-if="type=='选择题'||type=='多选题'" class="form-group">
+						                <label >选项C:</label>
+						                <input type="text" name="choicec" class="form-control" placeholder="" v-model="C">
+						            </div>
+						            			
+						            <div v-if="type=='选择题'||type=='多选题'"  class="form-group">	
+						            	 <label >选项D:</label>
+						                <input type="text" name="choiced" class="form-control" placeholder="" v-model="D">
+						            </div>
+						            <div class="form-group" v-if="type=='选择题'">
+						                <label >正确答案:</label>
+						                <input type="text" name="choicequesanswer" class="form-control" placeholder="" v-model="quesanswer">
+						            </div>
+						            <div class="form-group" v-if="type=='多选题'">
+						                <label >正确答案:</label>
+						                <input type="text" name="morechoicequesanswer" class="form-control" placeholder="" v-model="quesanswer">
+						            </div>
+						            <div class="form-group" v-if="type=='判断题'">
+						                <label >正确答案:</label>
+						                <input type="text" name="judageQuesanswer" class="form-control" placeholder="" v-model="quesanswer">
+						            </div>
+						            <div class="form-group">
+						            <label >难度:</label>
+						                <input type="text" name="choicediffcult" class="form-control" placeholder="" v-model="diffculty">
+						            </div>
+						            
+						            <div class="form-group">
+						                <label >专业:</label>
+						                <input type="text" name="choiceposition" class="form-control" placeholder="" v-model="position">
+						            </div>
+						            
+						             <div class="form-group">
+						            <label >考点:</label>
+						                <input type="text" name="choicekpoint" class="form-control" placeholder="" v-model="kpoint">
+						            </div>
+						        </form>
+		            </div>
+	           		 <div class="modal-footer text-right">
+                        <button data-dismiss="modal" class="btn btn-primary btn-sm" >取消</button>
+                        <button  class="btn btn-danger btn-sm" v-on:click="editMsg()">确认</button>
+                    </div>
+		        </div><!-- /.modal-content -->
+		    </div><!-- /.modal -->
+        
+   
+	 		
+	 		
+	 	</div>
+	 </template>
+	 <!--考试结果统计组件  -->
+	 <template id="model6">
+	 		 	<div>
+	 		
+	 		<span class="h3 ">{{tableName}}</span>
+			       <hr/>
+			       <form v-if="selectResult==true" class="form-horizontal" style="overflow: hidden;">
+					  <div class="form-group col-md-2">
+					      <select  class="form-control" name="statistic_pos" @change="pos_change()" v-model="statistic_pos" >
+					   			<option value="请选择专业">请选择专业</option>
+						 		<option   v-for="(val,index) in allposition"  :key="index">{{val.pos}}</option>
+						 </select>
+					  </div>
+					  <div class="form-group col-md-2">
+					        <select  class="form-control" name="statistic_fromwhere"  v-model="statistic_fromwhere" >
+						   			<option value="请选择来源">请选择来源</option>
+							 		<option   v-for="(val,index) in fromwhere"  :key="index">{{val.usersource}}</option>
+							 </select>
+					  </div>
+					  <div class="form-group col-md-3" name="statistic_score"  >
+						   <select  class="form-control" v-model="statistic_score">
+						   			<option value="请选择成绩范围">请选择成绩范围</option>
+							 		<option value="80">大于80</option>
+							 		<option value="60">大于60</option>
+							 		<option value="40">大于40</option>
+							 		<option value="20">大于20</option>
+							 </select>
+					  </div>
+					   <div class="form-group col-md-2" >
+					        <input type="text" class="form-control" placeholder="输入姓名" name="statistic_username" v-model="statistic_name">
+					  </div>
+					  <div class="form-group col-md-2">
+					       <button type="button" class="btn btn-success" aria-label="Left Align" v-on:click="searchMsg">
+							  <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+							  搜索
+							</button>
+					  </div>
+					</form>
+			        <table class="table ">
+			           	 <tr class="text-danger">
+			                <th class="text-left checkbox" index=0  @change="outExcelColum($event)" >
+			                	<label> <input type="checkbox" checked/>姓名</label>
+			                </th>
+			                 <th class="text-left checkbox" index=1  @change="outExcelColum($event)" checked>
+							 	<label> <input type="checkbox" checked/>来源</label>
+			                </th>
+			                 <th class="text-left checkbox" index=2 @change="outExcelColum($event)">
+							 	<label> <input type="checkbox" checked/> 专业</label>
+			                </th>
+			                <th class="text-left checkbox" index=3 @change="outExcelColum($event)">
+							 	<label> <input type="checkbox" checked/> 分数(分)</label>
+			                </th>
+			                 <th  class="text-left checkbox" index=4  @change="outExcelColum($event)">
+							 	<label> <input type="checkbox" checked/> 考试用时(分钟)</label>
+			                </th>
+			            </tr>
+			           <!--  <tr class="text-danger">
+			                <th class="text-left">姓名</th>
+			                <th class="text-left">来源</th>
+			                <th class="text-left">专业</th>
+			                <th class="text-left">分数(分)</th>
+			                <th class="text-left">考试用时(分钟)</th>
+
+			            </tr> -->
+			            <tr v-if="searchControll==true" v-show="index<(searchThisPageIndex+size)&&index>=searchThisPageIndex" class="text-left" v-for="(val,index) in myData"  :key="index">
+			                <td>{{val.username}}</td>
+							<td>{{val.usersource}}</td>
+			               	<td>{{val.position}}</td>
+			               	<td>{{val.score}}</td>
+			               	<td>{{val.costtime}}</td>
+			            </tr>
+			           
+			             <tr v-if="searchControll==false" class="text-left" v-for="(val,index) in myData"  :key="index">
+			                <td>{{val.username}}</td>
+							<td>{{val.usersource}}</td>
+			               	<td>{{val.position}}</td>
+			               	<td>{{val.score}}</td>
+			               	<td>{{val.costtime}}</td>
+			            </tr>
+			            <tr v-if="myData.length==0">
+			                <td colspan="5" class="text-center text-muted">
+			                    <p>暂无数据....</p>
+			                </td>
+			            </tr>
+			        </table>
+					<!-- <nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous" v-on:click="changPage(begin-=1)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next"  v-on:click="changPage(begin+=1)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"    v-on:click="changPage(total)">尾页</a></li>
+					  </ul>
+					</nav>	 -->
+					<nav aria-label="Page navigation ">
+					  <ul class="pagination pull-right">
+					  <li><a href="javascript:;" v-on:click="changPage(1,searchControll,0)">首页</a></li>
+					    <li>
+					      <a href="javascript:;" aria-label="Previous" v-on:click="changPage(begin-=1,searchControll,-10)">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					    
+					    
+					    <li>
+					      <a href="javascript:;" aria-label="Next"  v-on:click="changPage(begin+=1,searchControll,10)">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					    <li><a href="javascript:;"    v-on:click="changPage(total,searchControll,searchtotal)">尾页</a></li>
+					  </ul>
+					</nav>
+	 		
+	 	</div>
+	 </template>
+</body>
+</html>
